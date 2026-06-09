@@ -1,109 +1,117 @@
 const API_URL = 'https://6a170e181b90031f81b1f509.mockapi.io/api/pro/v1/todo';
 
 // Global variables
+const todoAddSection = document.getElementById('todo-input-section');
 const todoInput = document.getElementById('todoInput');
 const addBtn = document.getElementById('addTodoBtn');
+
+const updateSection = document.getElementById('update-section');
+const updateInput = document.getElementById('updateInput');
+const updateTodoBtn = document.getElementById('updateTodoBtn');
+const cancelUpdateBtn = document.getElementById('cancelUpdateBtn');
+
+
 const todoList = document.getElementById('todoList');
 const loading = document.getElementById('loading');
 const error = document.getElementById('error');
 const success = document.getElementById('success');
 const noTask = document.getElementById('no-task');
+const editBtn = document.getElementById('edit-btn');
 
+let editTaskId = null;
 
 // Error function
-function errerMessage (errorText){
+function errerMessage(errorText) {
     error.innerText = errorText;
     error.style.display = 'block';
     setTimeout(
-        ()=>{
+        () => {
             error.style.display = 'none';
         }
-    , 3000)
+        , 3000)
 }
 // success text
-function successMessage (successText){
+function successMessage(successText) {
     success.innerText = successText;
     success.style.display = 'block';
     setTimeout(
-        ()=>{
+        () => {
             success.style.display = 'none';
         }
-    , 3000)
+        , 3000)
 }
 
 // Get task list
 async function fetchTaskList() {
     loading.style.display = 'block';
-   try {
-    const fetchData = await fetch(API_URL)
-    const data = await fetchData.json();
+    try {
+        const fetchData = await fetch(API_URL)
+        const data = await fetchData.json();
 
-    if (data.length === 0) {
-        noTask.style.display = 'block';
+        if (data.length === 0) {
+            noTask.style.display = 'block';
+        }
+        data.forEach((task) => {
+            createElement(task)
+        });
+
+        loading.style.display = 'none';
+
+    } catch (error) {
+        loading.style.display = 'none';
+        errerMessage('Failed to load task.')
+
     }
-    data.forEach((task) => {
-        createElement(task)
-    });
-
-    loading.style.display = 'none';
-
-   } catch (error) {
-    loading.style.display = 'none';
-    errerMessage('Failed to load task.')
-    
-   }
 }
 
 // update check box 
-async function checkUpdate(id, taskValidation){
+async function checkUpdate(id, taskValidation) {
     const fetchData = await fetch(`${API_URL}/${id}`, {
         method: "PUT",
-        headers: {'content-type': "application/json"},
-        body: JSON.stringify({isCompleted: taskValidation})
-    }); 
+        headers: { 'content-type': "application/json" },
+        body: JSON.stringify({ isCompleted: taskValidation })
+    });
 }
 
 
-function createElement(task){
-const li = document.createElement('li');
-li.className = "todo-item";
-li.innerHTML =`
-    <input type="checkbox" class="check-box" ${task.isCompleted === true ? checked='checked' : ''} />
+function createElement(task) {
+    const li = document.createElement('li');
+    li.className = "todo-item";
+    li.innerHTML = `
+    <input type="checkbox" class="check-box" ${task.isCompleted === true ? checked = 'checked' : ''} />
     <span class="task-text">${task.title}</span>
-    <input type="text" class="edit-input" value="Learn JavaScript DOM Manipulation">
+
     <div class="actions">
-        <button class="edit-btn">Edit</button>
-        <button class="save-btn">Save</button>
-        <button class="cancel-btn">Cancel</button>
+        <button class="edit-btn" onclick="editSingleTask('${task.id}', '${task.title}')">Edit</button>
         <button class="delete-btn">Delete</button>
     </div>`;
 
-if (task.isCompleted) {
-    li.classList.add('completed');
-}
-
-const checkBox = li.querySelector('.check-box');
-todoList.appendChild(li);
-
-checkBox.addEventListener('change', async function(){
-    const id = task.id;
-    const btns = li.querySelectorAll('.edit-btn, .delete-btn');
-    
-    if (this.checked) {
+    if (task.isCompleted) {
         li.classList.add('completed');
-        btns.forEach(btn => btn.disabled = true);
-        await checkUpdate(id, true);
-
-    } else {
-        li.classList.remove('completed');
-        btns.forEach(btn => btn.disabled = false);
-        await checkUpdate(id, false);
     }
-});
+
+    const checkBox = li.querySelector('.check-box');
+    todoList.appendChild(li);
+
+    checkBox.addEventListener('change', async function () {
+        const id = task.id;
+        const btns = li.querySelectorAll('.edit-btn, .delete-btn');
+
+        if (this.checked) {
+            li.classList.add('completed');
+            btns.forEach(btn => btn.disabled = true);
+            await checkUpdate(id, true);
+
+        } else {
+            li.classList.remove('completed');
+            btns.forEach(btn => btn.disabled = false);
+            await checkUpdate(id, false);
+        }
+    });
 }
 
 // Create task 
-async function addTaskToList(){
+async function addTaskToList() {
     const title = todoInput.value;
     if (!title) {
         errerMessage('Please enter task');
@@ -115,7 +123,7 @@ async function addTaskToList(){
     try {
         const res = await fetch(API_URL, {
             method: 'POST',
-            headers: {'content-type': 'application/json'},
+            headers: { 'content-type': 'application/json' },
             body: JSON.stringify(data)
         });
 
@@ -126,15 +134,52 @@ async function addTaskToList(){
             successMessage('Task added successfully');
             todoInput.value = '';
         }
-        
+
     } catch (error) {
         loading.style.display = 'none';
         errerMessage('Failed to create task.');
         console.log(error);
+
+    }
+
+}
+
+// Edit task
+function editSingleTask(id, title) {
+    todoAddSection.style.display = "none";
+    updateSection.style.display = "block";
+    editTaskId = id;
+    updateInput.value = title;
+    updateInput.focus();
+}
+
+async function updateTask(editTaskId) {
+    const title = updateInput.value;
+    const id = editTaskId;
+
+    try {
+        const res = await fetch(`${API_URL}/${id}`, {
+        method: "PUT",
+        headers: {'content-type': 'application/json'},
+        body: JSON.stringify({title})
+    });
+
+
+    if (await res.ok) {
+        todoAddSection.style.display = "block";
+        updateSection.style.display = "none";
+        successMessage('Task updated successfully');
+        todoList.innerHTML = "";
+        fetchTaskList();
+    }
+    } catch (error) {
+        errerMessage('Failed to update task');
+        console.log(error);
         
     }
-    
 }
 
 fetchTaskList();
-addBtn.addEventListener('click', ()=>{addTaskToList()});
+addBtn.addEventListener('click', () => { addTaskToList() });
+updateTodoBtn.addEventListener('click', () => { updateTask(editTaskId) });
+

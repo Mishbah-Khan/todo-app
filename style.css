@@ -28,6 +28,49 @@
             font-size: 2em;
         }
 
+        #error {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            display: none;
+            font-size: 14px;
+            text-align: center;
+        }
+        #success {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            display: none;
+            font-size: 14px;
+            text-align: center;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        #loading{
+            text-align: center;
+            display: none;
+        }
+
+        #no-task {
+            color: #6c757d;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 16px;
+            font-style: italic;
+            display: none;
+        }
+
         .todo-input-section {
             display: flex;
             margin-bottom: 25px;

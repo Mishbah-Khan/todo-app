@@ -83,7 +83,7 @@ function createElement(task) {
 
     <div class="actions">
         <button class="edit-btn" onclick="editSingleTask('${task.id}', '${task.title}')">Edit</button>
-        <button class="delete-btn">Delete</button>
+        <button class="delete-btn" onclick = "deleteTask(${task.id})">Delete</button>
     </div>`;
 
     if (task.isCompleted) {
@@ -138,7 +138,6 @@ async function addTaskToList() {
     } catch (error) {
         loading.style.display = 'none';
         errerMessage('Failed to create task.');
-        console.log(error);
 
     }
 
@@ -162,6 +161,11 @@ async function updateTask(editTaskId) {
     const title = updateInput.value;
     const id = editTaskId;
 
+    if (!title) {
+        errerMessage('Invalid task');
+        return;
+    }
+
     try {
         const res = await fetch(`${API_URL}/${id}`, {
         method: "PUT",
@@ -170,7 +174,7 @@ async function updateTask(editTaskId) {
     });
 
 
-    if (await res.ok) {
+    if (res.ok) {
         todoAddSection.style.display = "flex";
         updateSection.style.display = "none";
         successMessage('Task updated successfully');
@@ -179,6 +183,29 @@ async function updateTask(editTaskId) {
     }
     } catch (error) {
         errerMessage('Failed to update task');
+        
+    }
+}
+
+// Delete task
+async function deleteTask(id) {
+    const confirmation =  confirm('Are you sure want to delete this task ? task ID: '+ id);
+
+    if (!confirmation) {
+        return;
+    }
+    try {
+        const res = await fetch(`${API_URL}/${id}`, {
+        method: "DELETE",
+        headers: {'content-type': 'application/json'}
+    });
+    if (res.ok) {
+        successMessage('Task deleted successfully');
+        todoList.innerHTML = "";
+        fetchTaskList();
+    }
+    } catch (error) {
+        errerMessage('Failed to delete task');
         console.log(error);
         
     }

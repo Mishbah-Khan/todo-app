@@ -147,10 +147,15 @@ async function addTaskToList() {
 // Edit task
 function editSingleTask(id, title) {
     todoAddSection.style.display = "none";
-    updateSection.style.display = "block";
+    updateSection.style.display = "flex";
     editTaskId = id;
     updateInput.value = title;
     updateInput.focus();
+}
+
+function cancelUpdating() {
+    todoAddSection.style.display = "flex";
+    updateSection.style.display = "none";
 }
 
 async function updateTask(editTaskId) {
@@ -166,7 +171,7 @@ async function updateTask(editTaskId) {
 
 
     if (await res.ok) {
-        todoAddSection.style.display = "block";
+        todoAddSection.style.display = "flex";
         updateSection.style.display = "none";
         successMessage('Task updated successfully');
         todoList.innerHTML = "";
@@ -180,6 +185,7 @@ async function updateTask(editTaskId) {
 }
 
 fetchTaskList();
-addBtn.addEventListener('click', () => { addTaskToList() });
-updateTodoBtn.addEventListener('click', () => { updateTask(editTaskId) });
+addBtn.addEventListener('click', () => {addTaskToList() });
+updateTodoBtn.addEventListener('click', () => {updateTask(editTaskId)});
+cancelUpdateBtn.addEventListener('click', () => {cancelUpdating()});
 

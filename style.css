@@ -234,3 +234,104 @@ h1 {
 .todo-item .delete-btn:hover {
     background-color: #c82333;
 }
+
+/* responsive  */
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+    .container {
+        padding: 20px;
+        margin-top: 20px;
+        max-width: 90%;
+    }
+
+    h1 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+
+    .todo-input-section {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    #todoInput {
+        margin-right: 0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    #addTodoBtn {
+        width: 100%;
+    }
+
+    .update-section {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    #updateInput {
+        margin-right: 0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    #updateTodoBtn, #cancelUpdateBtn {
+        width: 100%;
+    }
+
+    .todo-item {
+        flex-wrap: wrap;
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .todo-item .task-text {
+        margin-left: 0;
+        width: calc(100% - 30px);
+        order: 2;
+    }
+
+    .todo-item input[type="checkbox"] {
+        order: 1;
+    }
+
+    .todo-item .actions {
+        order: 3;
+        width: 100%;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .todo-item .edit-btn,
+    .todo-item .delete-btn {
+        flex: 1;
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .container {
+        padding: 15px;
+        max-width: 95%;
+    }
+
+    h1 {
+        font-size: 1.2em;
+    }
+
+    .todo-item {
+        padding: 10px;
+    }
+
+    .todo-item .edit-btn,
+    .todo-item .delete-btn {
+        padding: 6px 10px;
+        font-size: 0.8em;
+    }
+
+    #error, #success, #loading, #no-task {
+        font-size: 12px;
+        padding: 8px;
+    }
+}
